@@ -2,52 +2,102 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float jumpForce = 10f;
+    [Header("Movement")]
     public float moveSpeed = 5f;
-    public float gravity = -9.81f;
-    public float groundLevel = 0f;
+    public float jumpForce = 10f;
 
-    private Vector2 velocity;
+    private Rigidbody2D rb;
+    private Animator animator;
     private bool isGrounded;
+    private float horizontalInput;
+    private bool isJumping = false;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        rb.gravityScale = 3f;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
 
     void Update()
     {
-        // Check if the player is on the ground
-        isGrounded = transform.position.y <= groundLevel;
+        horizontalInput = Input.GetAxisRaw("Horizontal");
 
-        // Handle jump input
+        // Handle jumping
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
 
-        // Handle horizontal movement
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        velocity.x = horizontalInput * moveSpeed;
+        // Update animator parameters
+        UpdateAnimationStates();
 
-        // Apply gravity
-        if (!isGrounded)
+        // Handle character flipping
+        if (horizontalInput > 0)
         {
-            velocity.y += gravity * Time.deltaTime;
+            transform.localScale = new Vector3(1, 1, 1);
         }
-        else
+        else if (horizontalInput < 0)
         {
-            // Ensure the player doesn't sink below the ground
-            velocity.y = Mathf.Max(0, velocity.y);
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
+
+    void UpdateAnimationStates()
+    {
+        // Update movement magnitude
+        animator.SetFloat("magnitude", Mathf.Abs(horizontalInput));
+        
+        // Update vertical velocity
+        animator.SetFloat("yVelocity", rb.velocity.y);
+
+        // Handle jump state transitions
+        if (isJumping && rb.velocity.y < 0)
+        {
+            // Transition from jump to falling
+            isJumping = false;
+            animator.SetBool("Jump", false);
         }
 
-        // Move the player
-        transform.Translate(velocity * Time.deltaTime);
-
-        // Keep the player at ground level
-        if (transform.position.y < groundLevel)
-        {
-            transform.position = new Vector3(transform.position.x, groundLevel, transform.position.z);
-        }
     }
 
     void Jump()
     {
-        velocity.y = jumpForce;
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        isGrounded = false;
+        isJumping = true;
+        animator.SetBool("Jump", true);
+    }
+
+    void FixedUpdate()
+    {
+        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                if (contact.normal.y >= 0.7f)
+                {
+                    // Landing
+                    isGrounded = true;
+                    isJumping = false;
+                    animator.SetBool("Jump", false);
+                    break;
+                }
+            }
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }
