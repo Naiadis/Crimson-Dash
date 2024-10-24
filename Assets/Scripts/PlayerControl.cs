@@ -5,17 +5,24 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
+    
+    [Header("Dash")]
+    public float dashCooldown = 1f;
 
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
     private float horizontalInput;
     private bool isJumping = false;
+    private bool isDashing = false;
+    private float dashCooldownTimeLeft;
+    private Collider2D playerCollider;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerCollider = GetComponent<Collider2D>();
         rb.gravityScale = 3f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
@@ -30,8 +37,17 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        // Update animator parameters
-        UpdateAnimationStates();
+        // Handle dashing
+        if (Input.GetKeyDown(KeyCode.DownArrow) && !isDashing && dashCooldownTimeLeft <= 0)
+        {
+            StartDash();
+        }
+
+        // Update dash cooldown
+        if (dashCooldownTimeLeft > 0)
+        {
+            dashCooldownTimeLeft -= Time.deltaTime;
+        }
 
         // Handle character flipping
         if (horizontalInput > 0)
@@ -42,24 +58,42 @@ public class PlayerController : MonoBehaviour
         {
             transform.localScale = new Vector3(-1, 1, 1);
         }
+
+        UpdateAnimationStates();
     }
 
     void UpdateAnimationStates()
     {
-        // Update movement magnitude
         animator.SetFloat("magnitude", Mathf.Abs(horizontalInput));
-        
-        // Update vertical velocity
         animator.SetFloat("yVelocity", rb.velocity.y);
 
-        // Handle jump state transitions
         if (isJumping && rb.velocity.y < 0)
         {
-            // Transition from jump to falling
             isJumping = false;
             animator.SetBool("Jump", false);
         }
+    }
 
+    void StartDash()
+    {
+        isDashing = true;
+        dashCooldownTimeLeft = dashCooldown;
+        playerCollider.enabled = false;
+        
+        // Trigger the dash animation
+        animator.SetTrigger("Dash");
+        
+        // Start a coroutine to re-enable collider after animation
+        StartCoroutine(EndDashAfterAnimation());
+    }
+
+    System.Collections.IEnumerator EndDashAfterAnimation()
+    {
+        // Wait for the current animation state to end
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
+        
+        isDashing = false;
+        playerCollider.enabled = true;
     }
 
     void Jump()
@@ -83,7 +117,6 @@ public class PlayerController : MonoBehaviour
             {
                 if (contact.normal.y >= 0.7f)
                 {
-                    // Landing
                     isGrounded = true;
                     isJumping = false;
                     animator.SetBool("Jump", false);
