@@ -51,6 +51,9 @@ TagManager:
   - name: MidBack
     uniqueID: 520109433
     locked: 0
+  - name: Fog
+    uniqueID: 4044638771
+    locked: 0
   - name: NearBack
     uniqueID: 3612794329
     locked: 0
