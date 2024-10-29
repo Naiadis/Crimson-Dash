@@ -51,6 +51,9 @@ TagManager:
   - name: MidBack
     uniqueID: 520109433
     locked: 0
+  - name: Eyes
+    uniqueID: 1744311529
+    locked: 0
   - name: Fog
     uniqueID: 4044638771
     locked: 0
