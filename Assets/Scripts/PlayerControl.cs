@@ -31,11 +31,16 @@ public class PlayerController : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
-        // Handle jumping
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
+        if (Input.GetKeyDown(KeyCode.Space))
+    {
+        Debug.Log("Space pressed, isGrounded: " + isGrounded);
+    }
+
+    // Handle jumping
+    if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+    {
+        Jump();
+    }
 
         // Handle dashing
         if (Input.GetKeyDown(KeyCode.DownArrow) && !isDashing && dashCooldownTimeLeft <= 0)
@@ -70,7 +75,6 @@ public class PlayerController : MonoBehaviour
         if (isJumping && rb.velocity.y < 0)
         {
             isJumping = false;
-            animator.SetBool("Jump", false);
         }
     }
 
@@ -119,7 +123,7 @@ public class PlayerController : MonoBehaviour
                 {
                     isGrounded = true;
                     isJumping = false;
-                    // animator.SetBool("Jump", false);
+                    Debug.Log("Grounded set to true");
                     break;
                 }
             }
@@ -131,6 +135,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+            Debug.Log("Grounded set to false");
         }
     }
 }

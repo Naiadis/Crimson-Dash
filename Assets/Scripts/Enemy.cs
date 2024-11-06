@@ -3,7 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public int damageAmount = 1;
-    public float knockbackForce = 5f;
+    public float knockbackForce = 10f;
     
     private void OnCollisionEnter2D(Collision2D collision)
     {

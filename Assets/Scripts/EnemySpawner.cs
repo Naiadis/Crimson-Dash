@@ -8,8 +8,8 @@ public class EnemySpawner : MonoBehaviour
     public class EnemyType
     {
         public GameObject enemyPrefab;
-        public float spawnWeight = 1f;     // Higher weight = more frequent spawning
-        public float spawnHeight = 0f;     // Fixed height for this enemy type
+        public float spawnWeight = 1f;     
+        public float spawnHeight = 0f;     
     }
 
     [Header("Spawn Settings")]
@@ -22,7 +22,7 @@ public class EnemySpawner : MonoBehaviour
     public float spawnDistanceFromPlayer = 15f;  
     public Transform player;                     
 
-    private List<GameObject> activeEnemies = new List<GameObject>();
+    private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime;
     private Camera mainCamera;
 
@@ -80,12 +80,11 @@ public class EnemySpawner : MonoBehaviour
             }
         }
 
-        // Calculate spawn position with fixed height
-        float playerDirection = player.localScale.x;
-        Vector3 spawnPos = player.position + new Vector3(
-            spawnDistanceFromPlayer * playerDirection, 
-            selectedEnemy.spawnHeight, 
-            0);
+float playerDirection = player.localScale.x;
+Vector3 spawnPos = new Vector3(
+    player.position.x + spawnDistanceFromPlayer * playerDirection, 
+    selectedEnemy.spawnHeight,
+    0);
 
         // Check if spawn position is visible
         Vector3 viewportPoint = mainCamera.WorldToViewportPoint(spawnPos);

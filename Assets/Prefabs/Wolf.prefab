@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3684961234719666856}
   - component: {fileID: -6258273886803742084}
   - component: {fileID: 9077115011388270979}
+  - component: {fileID: -8607092223454627101}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Untagged
@@ -180,3 +181,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-8607092223454627101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840970291572711663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf8298bcc07c448fd8d40b4d7612e866, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 1
+  knockbackForce: 50
