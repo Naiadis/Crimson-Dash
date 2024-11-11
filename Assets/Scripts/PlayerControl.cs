@@ -6,8 +6,10 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
     
-    [Header("Dash")]
+    [Header("Dash/Slide")]
     public float dashCooldown = 1f;
+    public float normalColliderHeight = 2f;
+    public float slideColliderHeight = 1f;
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -16,15 +18,21 @@ public class PlayerController : MonoBehaviour
     private bool isJumping = false;
     private bool isDashing = false;
     private float dashCooldownTimeLeft;
-    private Collider2D playerCollider;
+    private BoxCollider2D boxCollider;
+    private Vector2 originalColliderSize;
+    private Vector2 originalColliderOffset;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        playerCollider = GetComponent<Collider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         rb.gravityScale = 3f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // Store original collider properties
+        originalColliderSize = boxCollider.size;
+        originalColliderOffset = boxCollider.offset;
     }
 
     void Update()
@@ -32,15 +40,15 @@ public class PlayerController : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
         if (Input.GetKeyDown(KeyCode.Space))
-    {
-        Debug.Log("Space pressed, isGrounded: " + isGrounded);
-    }
+        {
+            Debug.Log("Space pressed, isGrounded: " + isGrounded);
+        }
 
-    // Handle jumping
-    if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-    {
-        Jump();
-    }
+        // Handle jumping
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+        }
 
         // Handle dashing
         if (Input.GetKeyDown(KeyCode.DownArrow) && !isDashing && dashCooldownTimeLeft <= 0)
@@ -82,22 +90,32 @@ public class PlayerController : MonoBehaviour
     {
         isDashing = true;
         dashCooldownTimeLeft = dashCooldown;
-        playerCollider.enabled = false;
+
+        // Shrink the collider
+        Vector2 newSize = boxCollider.size;
+        newSize.y = slideColliderHeight;
+        boxCollider.size = newSize;
+
+        // Adjust collider offset to keep character grounded
+        Vector2 newOffset = boxCollider.offset;
+        newOffset.y = (slideColliderHeight - originalColliderSize.y) / 2;
+        boxCollider.offset = newOffset;
         
         // Trigger the dash animation
         animator.SetTrigger("Dash");
         
-        // Start a coroutine to re-enable collider after animation
         StartCoroutine(EndDashAfterAnimation());
     }
 
     System.Collections.IEnumerator EndDashAfterAnimation()
     {
-        // Wait for the current animation state to end
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
         
+        // Restore original collider properties
+        boxCollider.size = originalColliderSize;
+        boxCollider.offset = originalColliderOffset;
+        
         isDashing = false;
-        playerCollider.enabled = true;
     }
 
     void Jump()
@@ -114,28 +132,42 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
+{
+    CheckGroundContact(collision);
+}
+
+void OnCollisionStay2D(Collision2D collision)
+{
+    // Only check if we're not already grounded
+    if (!isGrounded)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        CheckGroundContact(collision);
+    }
+}
+
+void OnCollisionExit2D(Collision2D collision)
+{
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+        isGrounded = false;
+        Debug.Log("Grounded set to false");
+    }
+}
+
+private void CheckGroundContact(Collision2D collision)
+{
+    if (collision.gameObject.CompareTag("Ground"))
+    {
+        foreach (ContactPoint2D contact in collision.contacts)
         {
-            foreach (ContactPoint2D contact in collision.contacts)
+            if (contact.normal.y >= 0.7f)
             {
-                if (contact.normal.y >= 0.7f)
-                {
-                    isGrounded = true;
-                    isJumping = false;
-                    Debug.Log("Grounded set to true");
-                    break;
-                }
+                isGrounded = true;
+                isJumping = false;
+                Debug.Log("Ground contact detected");
+                return; // Exit as soon as we find a valid ground contact
             }
         }
     }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-            Debug.Log("Grounded set to false");
-        }
-    }
+}
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6104303772204498345}
   - component: {fileID: 416637914448755925}
   - component: {fileID: 3877771070823433268}
+  - component: {fileID: 6151082578596619033}
   m_Layer: 0
   m_Name: MudHand
   m_TagString: Untagged
@@ -180,3 +181,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 2.7}
   m_EdgeRadius: 0
+--- !u!114 &6151082578596619033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6101894872891720344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf8298bcc07c448fd8d40b4d7612e866, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 1
+  knockbackForce: 10

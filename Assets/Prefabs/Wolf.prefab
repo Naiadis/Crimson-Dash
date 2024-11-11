@@ -194,4 +194,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
-  knockbackForce: 50
+  knockbackForce: 10
