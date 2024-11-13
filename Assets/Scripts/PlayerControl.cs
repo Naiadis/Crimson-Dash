@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 10f;
     
     [Header("Dash/Slide")]
-    public float dashCooldown = 1f;
+    public float dashCooldown = 0.5f;
     public float normalColliderHeight = 2f;
     public float slideColliderHeight = 1f;
 
@@ -29,8 +29,6 @@ public class PlayerController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb.gravityScale = 3f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-        // Store original collider properties
         originalColliderSize = boxCollider.size;
         originalColliderOffset = boxCollider.offset;
     }
@@ -44,25 +42,25 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Space pressed, isGrounded: " + isGrounded);
         }
 
-        // Handle jumping
+        // jumping
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
 
-        // Handle dashing
+        // dashing
         if (Input.GetKeyDown(KeyCode.DownArrow) && !isDashing && dashCooldownTimeLeft <= 0)
         {
             StartDash();
         }
 
-        // Update dash cooldown
+        // dash cooldown
         if (dashCooldownTimeLeft > 0)
         {
             dashCooldownTimeLeft -= Time.deltaTime;
         }
 
-        // Handle character flipping
+        // character flipping
         if (horizontalInput > 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
@@ -101,7 +99,7 @@ public class PlayerController : MonoBehaviour
         newOffset.y = (slideColliderHeight - originalColliderSize.y) / 2;
         boxCollider.offset = newOffset;
         
-        // Trigger the dash animation
+        // dash animation
         animator.SetTrigger("Dash");
         
         StartCoroutine(EndDashAfterAnimation());
@@ -138,7 +136,6 @@ public class PlayerController : MonoBehaviour
 
 void OnCollisionStay2D(Collision2D collision)
 {
-    // Only check if we're not already grounded
     if (!isGrounded)
     {
         CheckGroundContact(collision);
@@ -165,7 +162,7 @@ private void CheckGroundContact(Collision2D collision)
                 isGrounded = true;
                 isJumping = false;
                 Debug.Log("Ground contact detected");
-                return; // Exit as soon as we find a valid ground contact
+                return; // Exit as soon as it finds a valid ground contact
             }
         }
     }

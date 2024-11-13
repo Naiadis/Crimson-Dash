@@ -13,7 +13,6 @@ public class ParticleParallax : MonoBehaviour
         startPosition = transform.position.x;
         particleSystem = GetComponent<ParticleSystem>();
         
-        // Get the width of your particle system's shape
         var shape = particleSystem.shape;
         length = shape.scale.x;
     }

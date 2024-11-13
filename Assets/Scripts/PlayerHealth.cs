@@ -62,7 +62,6 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         onDeath?.Invoke();
-        // Add your game over logic here
         Debug.Log("Player died!");
     }
 
