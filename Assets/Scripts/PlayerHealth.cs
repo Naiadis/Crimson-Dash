@@ -7,6 +7,7 @@ public class PlayerHealth : MonoBehaviour
     public float invincibilityDuration = 1f;
     public UnityEvent onDamaged;
     public UnityEvent onDeath;
+    public HealthBar healthBar;
 
     private int currentHealth;
     private bool isInvincible = false;
@@ -15,6 +16,7 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -23,6 +25,7 @@ public class PlayerHealth : MonoBehaviour
         if (isInvincible) return;
 
         currentHealth -= damage;
+        healthBar.SetHealth(currentHealth);
         onDamaged?.Invoke();
 
         // Flash effect when hit

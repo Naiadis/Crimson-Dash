@@ -5238,7 +5238,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290290632}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5247,8 +5247,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -235.3, y: -13.6011}
-  m_SizeDelta: {x: 70, y: 70}
+  m_AnchoredPosition: {x: -233.31903, y: -11.897732}
+  m_SizeDelta: {x: 71, y: 71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &290290634
 MonoBehaviour:
@@ -5417,8 +5417,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -575.0174, y: 403.6303}
-  m_SizeDelta: {x: -1553.9987, y: -1033.3262}
+  m_AnchoredPosition: {x: -579.8, y: 404.2}
+  m_SizeDelta: {x: -1569.42, y: -1064.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &449069098
 GameObject:
@@ -16164,6 +16164,7 @@ GameObject:
   - component: {fileID: 1230850811}
   - component: {fileID: 1230850810}
   - component: {fileID: 1230850812}
+  - component: {fileID: 1230850813}
   m_Layer: 5
   m_Name: Border
   m_TagString: Untagged
@@ -16187,8 +16188,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -48.982666, y: -13.630371}
-  m_SizeDelta: {x: 123.19379, y: 70.4747}
+  m_AnchoredPosition: {x: -46.519043, y: -11.927002}
+  m_SizeDelta: {x: 140.42004, y: 103.02002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1230850810
 MonoBehaviour:
@@ -16273,12 +16274,56 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 1
+  m_MaxValue: 3
+  m_WholeNumbers: 1
+  m_Value: 3
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1230850813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230850808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 598c169751a7e4290aaebebd11cc40be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 1230850812}
+  gradient:
+    serializedVersion: 2
+    key0: {r: 0.6, g: 0.09019608, b: 0, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 1}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 32382
+    atime2: 65535
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 3
+  fill: {fileID: 2020208075}
 --- !u!1 &1348804967
 GameObject:
   m_ObjectHideFlags: 0
@@ -17219,6 +17264,7 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
+  healthBar: {fileID: 1230850813}
 --- !u!1 &1859848254
 GameObject:
   m_ObjectHideFlags: 0
@@ -17569,7 +17615,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020208073}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17577,8 +17623,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -2.4782715, y: -1.9503784}
-  m_SizeDelta: {x: -16.287659, y: -29.796524}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0.0002975464}
+  m_SizeDelta: {x: -0.0030517578, y: 0.00032043457}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2020208075
 MonoBehaviour:
