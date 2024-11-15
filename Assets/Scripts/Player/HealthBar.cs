@@ -7,7 +7,7 @@ public class HealthBar : MonoBehaviour
     public Image mainFill;    
     public Image trailFill;   
     public float trailSpeed = 0.5f;
-    public Gradient trailGradient; // Add this
+    public Gradient trailGradient; 
 
     private float targetFillAmount;
     private float currentFillAmount;

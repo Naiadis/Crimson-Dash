@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -72,4 +73,10 @@ public class PlayerHealth : MonoBehaviour
     {
         return currentHealth;
     }
+
+    public void RestoreHealth(int newHealth)
+{
+    currentHealth = newHealth;
+    healthBar.SetHealth(currentHealth);
+}
 }

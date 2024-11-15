@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fire
+  m_Name: Flame
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -22,19 +22,19 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 1902171093, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.11666667
+    - time: 0.13333334
       value: {fileID: -1706516036, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.26666668
+    - time: 0.28333333
       value: {fileID: -1665209869, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.38333333
+    - time: 0.36666667
       value: {fileID: 265712061, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.5
+    - time: 0.51666665
       value: {fileID: 1376585836, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.6166667
+    - time: 0.6333333
       value: {fileID: 1523553622, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.76666665
+    - time: 0.71666664
       value: {fileID: -221866551, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
-    - time: 0.8833333
+    - time: 0.8666667
       value: {fileID: 1251386282, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
     - time: 1
       value: {fileID: 1095187914, guid: 8fddf37b8b1504992a061604b072f0fe, type: 3}
