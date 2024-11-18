@@ -11,6 +11,8 @@ public class PlayerHealth : MonoBehaviour
     public HealthBar healthBar;
 
     private int currentHealth;
+    private GameManager deathScreen;
+    private Animator animator;
     private bool isInvincible = false;
     private SpriteRenderer spriteRenderer;
     
@@ -19,6 +21,8 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        deathScreen = FindObjectOfType<GameManager>();
     }
 
     public void TakeDamage(int damage)
@@ -63,11 +67,13 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
     }
 
-    void Die()
-    {
-        onDeath?.Invoke();
-        Debug.Log("Player died!");
-    }
+void Die()
+{
+    onDeath?.Invoke();
+    animator.SetTrigger("Die");
+    GetComponent<PlayerController>().enabled = false;
+    GameManager.Instance.GameOver();
+}
 
     public int GetCurrentHealth()
     {

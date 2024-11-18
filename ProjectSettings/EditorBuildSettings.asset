@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DarkForest.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/DieScreen.unity
+    guid: 4b31b7f11730f444aa194affa79a5bdb
   m_configObjects: {}
