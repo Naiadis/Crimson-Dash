@@ -4,6 +4,23 @@ public class Enemy : MonoBehaviour
 {
     public int damageAmount = 1;
     public float knockbackForce = 10f;
+    private bool hasPassedPlayer = false;
+    private Transform playerTransform;
+
+    private void Start()
+    {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    private void Update()
+    {
+        // Check if enemy has passed the player
+        if (!hasPassedPlayer && transform.position.x < playerTransform.position.x)
+        {
+            hasPassedPlayer = true;
+            ScoreManager.Instance.AddEnemyAvoided();
+        }
+    }
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -14,7 +31,6 @@ public class Enemy : MonoBehaviour
             {
                 playerHealth.TakeDamage(damageAmount);
                 
-                // Apply knockback
                 Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
                 if (playerRb != null)
                 {
