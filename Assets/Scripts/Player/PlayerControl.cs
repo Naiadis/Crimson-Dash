@@ -5,6 +5,8 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
+    public float autoRunSpeed = 5f;
+    public float enemyBounceForce = 8f;
     
     [Header("Dash/Slide")]
     public float dashCooldown = 0.5f;
@@ -14,13 +16,15 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
-    private float horizontalInput;
     private bool isJumping = false;
     private bool isDashing = false;
     private float dashCooldownTimeLeft;
     private BoxCollider2D boxCollider;
     private Vector2 originalColliderSize;
     private Vector2 originalColliderOffset;
+    private bool isKnockedBack = false;
+    private float knockbackRecoveryTime = 0.5f;
+    private float knockbackTimer = 0f;
 
     void Start()
     {
@@ -31,15 +35,19 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         originalColliderSize = boxCollider.size;
         originalColliderOffset = boxCollider.offset;
+        transform.localScale = new Vector3(1, 1, 1); // Face right by default
     }
 
     void Update()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (isKnockedBack)
         {
-            Debug.Log("Space pressed, isGrounded: " + isGrounded);
+            knockbackTimer -= Time.deltaTime;
+            if (knockbackTimer <= 0)
+            {
+                isKnockedBack = false;
+            }
+            return;
         }
 
         // jumping
@@ -60,22 +68,12 @@ public class PlayerController : MonoBehaviour
             dashCooldownTimeLeft -= Time.deltaTime;
         }
 
-        // character flipping
-        if (horizontalInput > 0)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else if (horizontalInput < 0)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
-
         UpdateAnimationStates();
     }
 
     void UpdateAnimationStates()
     {
-        animator.SetFloat("magnitude", Mathf.Abs(horizontalInput));
+        animator.SetFloat("magnitude", 1);
         animator.SetFloat("yVelocity", rb.velocity.y);
 
         if (isJumping && rb.velocity.y < 0)
@@ -126,14 +124,41 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        if (!isKnockedBack)
+        {
+            rb.velocity = new Vector2(autoRunSpeed, rb.velocity.y);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
 {
     CheckGroundContact(collision);
+    if (collision.gameObject.CompareTag("Enemy"))
+        {
+            HandleEnemyCollision(collision);
+        }
 }
-
+private void HandleEnemyCollision(Collision2D collision)
+    {
+        ContactPoint2D contact = collision.GetContact(0);
+        
+        // If hitting enemy from above
+        if (contact.normal.y > 0.7f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, enemyBounceForce);
+            isGrounded = false;
+            isJumping = true;
+        }
+        else // Side collision
+        {
+            Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
+            knockbackDirection.y = 0.5f; // Add slight upward force
+            rb.velocity = knockbackDirection * collision.gameObject.GetComponent<Enemy>().knockbackForce;
+            
+            isKnockedBack = true;
+            knockbackTimer = knockbackRecoveryTime;
+        }
+    }
 void OnCollisionStay2D(Collision2D collision)
 {
     if (!isGrounded)
@@ -147,7 +172,6 @@ void OnCollisionExit2D(Collision2D collision)
     if (collision.gameObject.CompareTag("Ground"))
     {
         isGrounded = false;
-        Debug.Log("Grounded set to false");
     }
 }
 
@@ -161,7 +185,6 @@ private void CheckGroundContact(Collision2D collision)
             {
                 isGrounded = true;
                 isJumping = false;
-                Debug.Log("Ground contact detected");
                 return; // Exit as soon as it finds a valid ground contact
             }
         }

@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
     public class EnemyType
     {
         public GameObject enemyPrefab;
-        public float spawnWeight = 1f;     
+        public float baseSpawnWeight = 1f;     
         public float spawnHeight = 0f;     
     }
 
@@ -20,11 +20,18 @@ public class EnemySpawner : MonoBehaviour
     
     [Header("Spawn Area")]
     public float spawnDistanceFromPlayer = 15f;  
-    public Transform player;                     
+    public Transform player;          
+
+        [Header("Difficulty Scaling")]
+    public float distanceInterval = 500f;  // Distance between difficulty increases
+    public float weightIncreasePerInterval = 0.2f;  // How much to increase spawn weight
+    public float maxWeightMultiplier = 2f;  // Maximum weight multiplier           
 
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime;
     private Camera mainCamera;
+    private float distanceTraveled;
+    private float currentWeightMultiplier = 1f;
 
     void Start()
     {
@@ -62,7 +69,8 @@ public class EnemySpawner : MonoBehaviour
         float totalWeight = 0;
         foreach (var enemy in enemies)
         {
-            totalWeight += enemy.spawnWeight;
+            
+            totalWeight += enemy.baseSpawnWeight * currentWeightMultiplier;
         }
 
         // Select random enemy based on weight
@@ -72,8 +80,7 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (var enemy in enemies)
         {
-            weightSum += enemy.spawnWeight;
-            if (randomValue <= weightSum)
+            weightSum += enemy.baseSpawnWeight * currentWeightMultiplier;            if (randomValue <= weightSum)
             {
                 selectedEnemy = enemy;
                 break;
@@ -106,13 +113,23 @@ Vector3 spawnPos = new Vector3(
     {
         if (player == null) return;
 
-        float despawnDistance = spawnDistanceFromPlayer * 2f;
+        // Update distance and difficulty
+        distanceTraveled = player.position.x;
+        currentWeightMultiplier = 1f + (Mathf.Floor(distanceTraveled / distanceInterval) * weightIncreasePerInterval);
+        currentWeightMultiplier = Mathf.Min(currentWeightMultiplier, maxWeightMultiplier);
+
+        // More aggressive cleanup
+        float despawnDistance = spawnDistanceFromPlayer * 1.5f; // Reduced from 2f
         for (int i = activeEnemies.Count - 1; i >= 0; i--)
         {
-            if (activeEnemies[i] == null) continue;
+            if (activeEnemies[i] == null) 
+            {
+                activeEnemies.RemoveAt(i);
+                continue;
+            }
 
-            float distance = Mathf.Abs(activeEnemies[i].transform.position.x - player.position.x);
-            if (distance > despawnDistance)
+            float distance = activeEnemies[i].transform.position.x - player.position.x;
+            if (distance < -despawnDistance) // Only check behind player
             {
                 Destroy(activeEnemies[i]);
                 activeEnemies.RemoveAt(i);

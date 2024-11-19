@@ -6,10 +6,12 @@ public class Enemy : MonoBehaviour
     public float knockbackForce = 10f;
     private bool hasPassedPlayer = false;
     private Transform playerTransform;
+    private Camera mainCamera;
 
     private void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        mainCamera = Camera.main;
     }
 
     private void Update()
@@ -19,6 +21,16 @@ public class Enemy : MonoBehaviour
         {
             hasPassedPlayer = true;
             ScoreManager.Instance.AddEnemyAvoided();
+        }
+
+        // Destroy only when enemy has passed player and is off-screen
+        if (hasPassedPlayer)
+        {
+            Vector3 viewportPoint = mainCamera.WorldToViewportPoint(transform.position);
+            if (viewportPoint.x < -0.1f)  // Slightly off screen to the left
+            {
+                Destroy(gameObject);
+            }
         }
     }
     
@@ -31,12 +43,6 @@ public class Enemy : MonoBehaviour
             {
                 playerHealth.TakeDamage(damageAmount);
                 
-                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-                if (playerRb != null)
-                {
-                    Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
-                    playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-                }
             }
         }
     }
