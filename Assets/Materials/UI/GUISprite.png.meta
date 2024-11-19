@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e3d777b28904040b78ca0c080f6fa47f
+guid: fd60bcc4667204b32a52ccef2315ca61
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Health_01_0
+      name: GUISprite_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 2
-        width: 126
-        height: 30
+        x: 18
+        y: 48
+        width: 64
+        height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,71 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ee617ac3e4b1847b284aa362e3b293e6
-      internalID: 844439692
+      spriteID: a82c0c12d324e48ce8cf3cc210dba359
+      internalID: 886764696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GUISprite_1
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 32
+        width: 72
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c013718e442fe47259ceca7e350405aa
+      internalID: 639547482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GUISprite_3
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 18
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dec3eac81aa340cf9a72872ec945332
+      internalID: -53493793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GUISprite_4
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 4
+        width: 78
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d519f7decec5843bc9c7bf37954d2cab
+      internalID: -1074501456
       vertices: []
       indices: 
       edges: []
@@ -141,7 +204,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Health_01_0: 844439692
+      GUISprite_0: 886764696
+      GUISprite_1: 639547482
+      GUISprite_2: 1011551566
+      GUISprite_3: -53493793
+      GUISprite_4: -1074501456
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

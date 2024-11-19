@@ -3,6 +3,9 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
+    public static float FinalDistance { get; private set; }
+    public static int FinalScore { get; private set; }
+    
     [Header("Score Settings")]
     [SerializeField] private float metersPerUnit = 1f; // meters per Unity unit
     [SerializeField] private int pointsPerEnemy = 100; // Points awarded for each enemy avoided
@@ -31,6 +34,13 @@ public class ScoreManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+     // Store final scores before death
+    public void StoreFinalScores()
+    {
+        FinalDistance = distanceTraveled;
+        FinalScore = totalScore;
     }
     
     private void Start()

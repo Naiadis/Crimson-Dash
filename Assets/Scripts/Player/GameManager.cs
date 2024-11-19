@@ -25,8 +25,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator TransitionToDeathScreen()
     {
-        fadeAnimator.SetTrigger("Start");
-        yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("DieScreen");
+        if (ScoreManager.Instance != null)
+        ScoreManager.Instance.StoreFinalScores();
+        
+    fadeAnimator.SetTrigger("Start");
+    yield return new WaitForSeconds(1f);
+    SceneManager.LoadScene("DieScreen");
     }
 }
