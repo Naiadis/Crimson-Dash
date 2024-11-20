@@ -8,6 +8,7 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finalDistanceText;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private string gameSceneName = "DarkForest";
+    [SerializeField] private string menuSceneName = "MainMenu";
 
     private void Start()
     {
@@ -21,5 +22,10 @@ public class GameOverManager : MonoBehaviour
     public void OnPlayAgainClicked()
     {
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void OnMainMenuClicked()
+    {
+        SceneManager.LoadScene(menuSceneName);
     }
 }

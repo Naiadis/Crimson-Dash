@@ -17397,8 +17397,8 @@ MonoBehaviour:
     baseSpawnWeight: 0.5
     spawnHeight: -4.5
   minSpawnInterval: 2
-  maxSpawnInterval: 5
-  maxEnemiesAtOnce: 5
+  maxSpawnInterval: 6
+  maxEnemiesAtOnce: 10
   spawnDistanceFromPlayer: 15
   player: {fileID: 1839873828}
   distanceInterval: 50

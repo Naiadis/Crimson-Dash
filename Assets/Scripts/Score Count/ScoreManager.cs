@@ -41,8 +41,26 @@ public class ScoreManager : MonoBehaviour
     {
         FinalDistance = distanceTraveled;
         FinalScore = totalScore;
+        
+        // Mark that the game has been played
+        PlayerPrefs.SetInt("HasPlayed", 1);
+        
+        // Update high score if better than previous
+        int currentHighScore = PlayerPrefs.GetInt("HighScore", 0);
+        if (totalScore > currentHighScore)
+        {
+            PlayerPrefs.SetInt("HighScore", totalScore);
+        }
+        
+        // Update best distance if better than previous
+        float currentHighDistance = PlayerPrefs.GetFloat("HighDistance", 0f);
+        if (distanceTraveled > currentHighDistance)
+        {
+            PlayerPrefs.SetFloat("HighDistance", distanceTraveled);
+        }
+        
+        PlayerPrefs.Save();
     }
-    
     private void Start()
     {
         // reference to player
