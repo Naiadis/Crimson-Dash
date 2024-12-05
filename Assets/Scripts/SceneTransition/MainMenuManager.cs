@@ -1,18 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 
 public class MainMenuManager : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject highScorePanel;  // Parent panel/object containing score texts
+    [SerializeField] private GameObject highScorePanel;
     [SerializeField] private TextMeshProUGUI highScoreText;
     [SerializeField] private TextMeshProUGUI highDistanceText;
     [SerializeField] private string gameSceneName = "DarkForest";
+    [SerializeField] private float transitionDelay = 1f;
 
     private void Start()
     {
-        // Check if there's a recorded high score
         if (PlayerPrefs.HasKey("HasPlayed"))
         {
             if (highScorePanel != null)
@@ -35,6 +36,12 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnPlayClicked()
     {
+        StartCoroutine(LoadGameWithDelay());
+    }
+
+    private IEnumerator LoadGameWithDelay()
+    {
+        yield return new WaitForSeconds(transitionDelay);
         SceneManager.LoadScene(gameSceneName);
     }
 }
