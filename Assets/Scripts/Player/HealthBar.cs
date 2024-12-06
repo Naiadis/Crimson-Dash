@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class HealthBar : MonoBehaviour 
 {
@@ -9,8 +10,11 @@ public class HealthBar : MonoBehaviour
     public float trailSpeed = 0.5f;
     public Gradient trailGradient;
     
+    [Header("Events")]
+    public UnityEvent onHeal;
+    
     [Header("Border Animation")]
-    public Animator borderAnimator;  // Reference to the border's Animator component
+    public Animator borderAnimator;
     
     private float targetFillAmount;
     private float currentFillAmount;
@@ -25,19 +29,12 @@ public class HealthBar : MonoBehaviour
         mainFill.fillAmount = currentFillAmount;
         trailFill.fillAmount = currentFillAmount;
         
-        // Get the animator component from the Border object
         if (borderAnimator == null)
         {
-            // Try to find the Animator on the Border child object
             Transform borderTransform = transform.Find("Border");
             if (borderTransform != null)
             {
                 borderAnimator = borderTransform.GetComponent<Animator>();
-            }
-            
-            if (borderAnimator == null)
-            {
-                Debug.LogWarning("Border Animator not found! Please assign it in the inspector.");
             }
         }
     }
@@ -60,8 +57,11 @@ public class HealthBar : MonoBehaviour
     {
         if (health < previousHealth && borderAnimator != null)
         {
-            // Trigger the drain animation
             borderAnimator.SetTrigger(DrainTrigger);
+        }
+        else if (health > previousHealth)
+        {
+            onHeal?.Invoke();
         }
         
         slider.value = health;

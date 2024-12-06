@@ -19,30 +19,39 @@ public class EnemySpawner : MonoBehaviour
     public int maxEnemiesAtOnce = 5;       
     
     [Header("Spawn Area")]
-    public float spawnDistanceFromPlayer = 15f;  
-    public Transform player;          
+    public Transform player;      
 
-        [Header("Difficulty Scaling")]
-    public float distanceInterval = 500f;  // Distance between difficulty increases
-    public float weightIncreasePerInterval = 0.2f;  // How much to increase spawn weight
-    public float maxWeightMultiplier = 2f;  // Maximum weight multiplier           
+    [Header("Gap Scaling")]
+    public float initialSpawnDistance = 15f;
+    public float minSpawnDistance = 8f;
+    public float distanceReductionRate = 0.001f;    
+
+    [Header("Difficulty Scaling")]
+    public float distanceInterval = 500f;
+    public float weightIncreasePerInterval = 0.2f;
+    public float maxWeightMultiplier = 2f;
+    public float spawnIntervalReduction = 0.1f;
 
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime;
     private Camera mainCamera;
     private float distanceTraveled;
     private float currentWeightMultiplier = 1f;
+    private float currentSpawnDistance;
 
     void Start()
     {
         mainCamera = Camera.main;
+        currentSpawnDistance = initialSpawnDistance;
         SetNextSpawnTime();
         StartCoroutine(SpawnRoutine());
     }
 
     void SetNextSpawnTime()
     {
-        nextSpawnTime = Time.time + Random.Range(minSpawnInterval, maxSpawnInterval);
+        float currentMinInterval = Mathf.Max(minSpawnInterval - (distanceTraveled / distanceInterval) * spawnIntervalReduction, 0.5f);
+        float currentMaxInterval = Mathf.Max(maxSpawnInterval - (distanceTraveled / distanceInterval) * spawnIntervalReduction, 1f);
+        nextSpawnTime = Time.time + Random.Range(currentMinInterval, currentMaxInterval);
     }
 
     IEnumerator SpawnRoutine()
@@ -65,43 +74,52 @@ public class EnemySpawner : MonoBehaviour
     {
         if (player == null || enemies.Length == 0) return;
 
-        // Calculate total weight
+        EnemyType selectedEnemy = SelectEnemyByWeight();
+        float playerDirection = player.localScale.x;
+        Vector3 spawnPos = CalculateSpawnPosition(playerDirection, selectedEnemy.spawnHeight);
+
+        GameObject newEnemy = Instantiate(selectedEnemy.enemyPrefab, spawnPos, Quaternion.identity);
+        activeEnemies.Add(newEnemy);
+    }
+
+    EnemyType SelectEnemyByWeight()
+    {
         float totalWeight = 0;
         foreach (var enemy in enemies)
         {
-            
             totalWeight += enemy.baseSpawnWeight * currentWeightMultiplier;
         }
 
-        // Select random enemy based on weight
         float randomValue = Random.Range(0, totalWeight);
         float weightSum = 0;
-        EnemyType selectedEnemy = enemies[0];
 
         foreach (var enemy in enemies)
         {
-            weightSum += enemy.baseSpawnWeight * currentWeightMultiplier;            if (randomValue <= weightSum)
+            weightSum += enemy.baseSpawnWeight * currentWeightMultiplier;
+            if (randomValue <= weightSum)
             {
-                selectedEnemy = enemy;
-                break;
+                return enemy;
             }
         }
 
-float playerDirection = player.localScale.x;
-Vector3 spawnPos = new Vector3(
-    player.position.x + spawnDistanceFromPlayer * playerDirection, 
-    selectedEnemy.spawnHeight,
-    0);
+        return enemies[0];
+    }
 
-        // Check if spawn position is visible
+    Vector3 CalculateSpawnPosition(float playerDirection, float spawnHeight)
+    {
+        Vector3 spawnPos = new Vector3(
+            player.position.x + currentSpawnDistance * playerDirection,
+            spawnHeight,
+            0
+        );
+
         Vector3 viewportPoint = mainCamera.WorldToViewportPoint(spawnPos);
         if (viewportPoint.x >= 0 && viewportPoint.x <= 1 && viewportPoint.y >= 0 && viewportPoint.y <= 1)
         {
             spawnPos.x += playerDirection * 5f;
         }
 
-        GameObject newEnemy = Instantiate(selectedEnemy.enemyPrefab, spawnPos, Quaternion.identity);
-        activeEnemies.Add(newEnemy);
+        return spawnPos;
     }
 
     void CleanupDestroyedEnemies()
@@ -113,23 +131,38 @@ Vector3 spawnPos = new Vector3(
     {
         if (player == null) return;
 
-        // Update distance and difficulty
-        distanceTraveled = player.position.x;
-        currentWeightMultiplier = 1f + (Mathf.Floor(distanceTraveled / distanceInterval) * weightIncreasePerInterval);
-        currentWeightMultiplier = Mathf.Min(currentWeightMultiplier, maxWeightMultiplier);
+        UpdateDifficultyScaling();
+        CleanupOffscreenEnemies();
+    }
 
-        // More aggressive cleanup
-        float despawnDistance = spawnDistanceFromPlayer * 1.5f; // Reduced from 2f
+    void UpdateDifficultyScaling()
+    {
+        distanceTraveled = player.position.x;
+        
+        currentSpawnDistance = Mathf.Max(
+            initialSpawnDistance - (distanceTraveled * distanceReductionRate),
+            minSpawnDistance
+        );
+
+        currentWeightMultiplier = Mathf.Min(
+            1f + (Mathf.Floor(distanceTraveled / distanceInterval) * weightIncreasePerInterval),
+            maxWeightMultiplier
+        );
+    }
+
+    void CleanupOffscreenEnemies()
+    {
+        float despawnDistance = currentSpawnDistance * 1.5f;
         for (int i = activeEnemies.Count - 1; i >= 0; i--)
         {
-            if (activeEnemies[i] == null) 
+            if (activeEnemies[i] == null)
             {
                 activeEnemies.RemoveAt(i);
                 continue;
             }
 
             float distance = activeEnemies[i].transform.position.x - player.position.x;
-            if (distance < -despawnDistance) // Only check behind player
+            if (distance < -despawnDistance)
             {
                 Destroy(activeEnemies[i]);
                 activeEnemies.RemoveAt(i);

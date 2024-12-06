@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Difficulty Scaling")]
+    public float baseSpeed = 8f;
+    public float maxSpeed = 30f;
+    public float accelerationRate = 0.001f;
+
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
-    public float autoRunSpeed = 5f;
+    private float autoRunSpeed;
+    private float distanceTraveled;
     public float enemyBounceForce = 8f;
-    
+
     [Header("Dash/Slide")]
     public float dashCooldown = 0.5f;
     public float normalColliderHeight = 2f;
@@ -16,6 +22,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
+    private bool canDoubleJump = false;
+    private bool hasDoubleJumped = false;
     private bool isJumping = false;
     private bool isDashing = false;
     private float dashCooldownTimeLeft;
@@ -28,6 +36,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        autoRunSpeed = baseSpeed;
+        distanceTraveled = 0f;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -50,11 +60,26 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // jumping
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Jump();
+            if (isGrounded)
+            {
+                Jump();
+                canDoubleJump = true;
+            }
+            else if (canDoubleJump && !hasDoubleJumped)
+            {
+                Jump();
+                hasDoubleJumped = true;
+                canDoubleJump = false;
+            }
         }
+
+        // // jumping
+        // if (isGrounded && Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     Jump();
+        // }
 
         // dashing
         if (Input.GetKeyDown(KeyCode.DownArrow) && !isDashing && dashCooldownTimeLeft <= 0)
@@ -96,21 +121,21 @@ public class PlayerController : MonoBehaviour
         Vector2 newOffset = boxCollider.offset;
         newOffset.y = (slideColliderHeight - originalColliderSize.y) / 2;
         boxCollider.offset = newOffset;
-        
+
         // dash animation
         animator.SetTrigger("Dash");
-        
+
         StartCoroutine(EndDashAfterAnimation());
     }
 
     System.Collections.IEnumerator EndDashAfterAnimation()
     {
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
-        
+
         // Restore original collider properties
         boxCollider.size = originalColliderSize;
         boxCollider.offset = originalColliderOffset;
-        
+
         isDashing = false;
     }
 
@@ -126,22 +151,26 @@ public class PlayerController : MonoBehaviour
     {
         if (!isKnockedBack)
         {
+            // Update distance and speed
+            distanceTraveled += autoRunSpeed * Time.fixedDeltaTime;
+            autoRunSpeed = Mathf.Min(baseSpeed + (distanceTraveled * accelerationRate), maxSpeed);
+
             rb.velocity = new Vector2(autoRunSpeed, rb.velocity.y);
         }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
-{
-    CheckGroundContact(collision);
-    if (collision.gameObject.CompareTag("Enemy"))
+    {
+        CheckGroundContact(collision);
+        if (collision.gameObject.CompareTag("Enemy"))
         {
             HandleEnemyCollision(collision);
         }
-}
-private void HandleEnemyCollision(Collision2D collision)
+    }
+    private void HandleEnemyCollision(Collision2D collision)
     {
         ContactPoint2D contact = collision.GetContact(0);
-        
+
         // If hitting enemy from above
         if (contact.normal.y > 0.7f)
         {
@@ -154,40 +183,41 @@ private void HandleEnemyCollision(Collision2D collision)
             Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
             knockbackDirection.y = 0.5f; // Add slight upward force
             rb.velocity = knockbackDirection * collision.gameObject.GetComponent<Enemy>().knockbackForce;
-            
+
             isKnockedBack = true;
             knockbackTimer = knockbackRecoveryTime;
         }
     }
-void OnCollisionStay2D(Collision2D collision)
-{
-    if (!isGrounded)
+    void OnCollisionStay2D(Collision2D collision)
     {
-        CheckGroundContact(collision);
-    }
-}
-
-void OnCollisionExit2D(Collision2D collision)
-{
-    if (collision.gameObject.CompareTag("Ground"))
-    {
-        isGrounded = false;
-    }
-}
-
-private void CheckGroundContact(Collision2D collision)
-{
-    if (collision.gameObject.CompareTag("Ground"))
-    {
-        foreach (ContactPoint2D contact in collision.contacts)
+        if (!isGrounded)
         {
-            if (contact.normal.y >= 0.7f)
+            CheckGroundContact(collision);
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
+    }
+
+    private void CheckGroundContact(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            foreach (ContactPoint2D contact in collision.contacts)
             {
-                isGrounded = true;
-                isJumping = false;
-                return; // Exit as soon as it finds a valid ground contact
+                if (contact.normal.y >= 0.7f)
+                {
+                    isGrounded = true;
+                    isJumping = false;
+                    hasDoubleJumped = false;
+                    return; // Exit as soon as it finds a valid ground contact
+                }
             }
         }
     }
-}
 }

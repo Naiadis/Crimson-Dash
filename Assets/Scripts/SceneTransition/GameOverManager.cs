@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private string gameSceneName = "DarkForest";
     [SerializeField] private string menuSceneName = "MainMenu";
+    [SerializeField] private float transitionDelay = 1f;  // Added delay parameter
 
     private void Start()
     {
@@ -21,11 +23,17 @@ public class GameOverManager : MonoBehaviour
 
     public void OnPlayAgainClicked()
     {
-        SceneManager.LoadScene(gameSceneName);
+        StartCoroutine(LoadSceneWithDelay(gameSceneName));
     }
 
     public void OnMainMenuClicked()
     {
-        SceneManager.LoadScene(menuSceneName);
+        StartCoroutine(LoadSceneWithDelay(menuSceneName));
+    }
+
+    private IEnumerator LoadSceneWithDelay(string sceneName)
+    {
+        yield return new WaitForSeconds(transitionDelay);
+        SceneManager.LoadScene(sceneName);
     }
 }

@@ -121,6 +121,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healEffectPrefab: {fileID: 3678126203186750189, guid: 8c5348dfb283b474aa0bb5b29940c886, type: 3}
+  audioSource: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 401e7cf6baa674e85bcf65f6b7a3ed01, type: 3}
+  onPickup:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!58 &5587573652892493351
 CircleCollider2D:
   m_ObjectHideFlags: 0
