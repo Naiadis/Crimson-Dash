@@ -42,4 +42,7 @@ Use the following controls to navigate through the game:
 - **Space**: Jump/Double Jump
 - **Down Arrow**: Slide/Dash
 
+## Gameplay
+https://github.com/user-attachments/assets/5b980dce-4576-481c-aa69-4cd8a132a1c5
+
 Run as far as possible, avoid enemies, and collect hearts to survive longer and achieve a higher score!
